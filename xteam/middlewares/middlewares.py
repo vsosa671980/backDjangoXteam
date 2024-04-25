@@ -1,4 +1,4 @@
-
+from security.tockenManage import TokenAdministration
 # custom_middleware.py
 
 class TokenMiddlewareVerification:
@@ -6,17 +6,14 @@ class TokenMiddlewareVerification:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Palabras clave para las vistas específicas
-        keywords = ['user', ]
-
-        # Verifica si la URL de la solicitud contiene alguna de las palabras clave
-        if any(keyword in request.path for keyword in keywords):
-            # Código que se ejecutará solo para las vistas que contienen las palabras clave
-            print("Middleware ejecutándose para las vistas específicas...")
-        else:
-            # Código que se ejecutará para otras vistas
-            print("Middleware ejecutándose para otras vistas...")
-
+        
+        authorization_header = request.headers.get('Authorization')
+        if authorization_header:
+            # El encabezado de autorización tiene el formato 'Bearer <token>', por lo que dividimos el encabezado y tomamos la segunda parte
+            token = authorization_header.split(' ')[1]
+            
+            ## Usamos el token para lo que queramos
+       
         # Llama a la vista
         response = self.get_response(request)
 
