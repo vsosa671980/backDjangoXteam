@@ -8,13 +8,16 @@ load_dotenv()
 class TokenAdministration:
     
     # Función para generar un token de autenticación
-    def generate_token(user_id):
+    def generate_token(user_id,rol):
         payload = {
             'user_id': user_id,
+            'rol':rol,
             # Token expira en 1 día
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1) 
     }
         token = jwt.encode(payload,os.getenv("SECRET_KEY"), algorithm='HS256')
-        return token.decode('utf-8')
+        print(token)
+        return token
     
     def verify_token(token):
         try:

@@ -3,6 +3,7 @@ from .models import User
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from utils.utils import check_password
+from security.tockenManage import TokenAdministration
 
 def CreateUSer(name, surname, email, password, phone, status, rol, img, age):
     """Create a new user and save it to the database
@@ -65,8 +66,13 @@ def Login(email,password_request):
    
    if user is not None:
        user_password= user.password
-       print(check_password(password_request,user_password))
-       
+       id = user.id
+       rol = user.rol
+       print(id)
+       verification_password =check_password(password_request,user_password)
+       if verification_password:
+         token = TokenAdministration.generate_token(id,rol)
+         return token
        
       
        
