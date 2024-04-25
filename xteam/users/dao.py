@@ -1,66 +1,74 @@
-from  utils.utils import encrypt_password
+from utils.utils import encrypt_password
 from .models import User
-from django.http import HttpResponse
-from django.core.exceptions import ValidationError
 from django.http import JsonResponse
-from security.tockenManage import TokenAdministration
+from django.core.exceptions import ValidationError
 from utils.utils import check_password
 
+def CreateUSer(name, surname, email, password, phone, status, rol, img, age):
+    """Create a new user and save it to the database
 
-def CreateUSer(name, surname, email, password, phone, age,status, img, token):
-    passwordEncrypted = encrypt_password(password)
-    ## Create the user
-    try:
-        # Crear el usuario y validar los campos durante el proceso de creación
-        user = User.objects.create(
-            name=name,
-            surname=surname,
-            email=email,
-            password=passwordEncrypted,
-            phone=phone,
-            age=age,
-            img=img,
-            token=token,
-            status=status
-        )
-        ## Validate the errors
-        print(user.age)
-        print(user.name)
-        user.full_clean()
-        print("nada")
-    except Exception as e:
-        print("Entro en la excepcion")# Si la validación falla, devolver un JSON con el mensaje de error
-       #return JsonResponse({"status": "error", "message": str(e)}, status=400)
-        raise Exception("Error" , e)
+    Args:
+        name (str): Nombre del usuario.
+        surname (str): Apellido del usuario.
+        email (str): Correo electrónico del usuario.
+        password (str): Contraseña del usuario.
+        phone (str): Número de teléfono del usuario.
+        status (str): Estado del usuario.
+        rol (str): Rol del usuario.
+        img (str): Ruta de la imagen del usuario.
+        age (str): Edad del usuario.
 
-    # Si pasa todas las validaciones, guarda el usuario en la base de datos
-    user.save()
+    Raises:
+        Exception: Se produce si hay algún error durante el proceso de creación del usuario.
 
-    # Retorna un JSON de éxito
-    return JsonResponse({"status": "success", "message": "Successfully created"})
- 
- 
+    Returns:
+        JsonResponse: JSON de éxito o error.
+    """
+    # Verificar si el usuario ya existe en la base de datos
+    user = find_User_ByEmail(email)
+    print(user)
+    if user is None:
+        try:
+            
+            # Encryptar la contraseña
+            password_encrypted = encrypt_password(password)
+            # Crear una instancia del modelo User
+            user = User(
+                name=name,
+                surname=surname,
+                email=email,
+                password=password_encrypted,
+                phone=phone,
+                age=age,
+                img=img,
+                rol=rol,
+                status=status
+            )
+            # Validate the model
+            user.full_clean()
+            # Save the user in the database
+            user.save()
+        except Exception as e:
+            raise Exception("Error", e)
+    else:
+        raise Exception("User already exists")
+    
 def find_User_ByEmail(email)-> User :
-   user = User.objects.get(email=email)
-   if user == None:
-      return JsonResponse({"status": "error", "message":"user not found"})
-   return user
-
-
- 
-def Login(email,plain):
-
-   user = find_User_ByEmail(email)
+   user = User.objects.filter(email=email).first()
    print(user)
+   if user is None:
+       return  
+   else:
+       return user
+def Login(email,password_request):
+   user = find_User_ByEmail(email)
    
-   password = user.password
-   
-   try:
-       if user != None:
-           if check_password(password,plain):
-               token = TokenAdministration.generate_token(user)
-               return token
-   except Exception as e:
-       raise Exception("Error" , e)
+   if user is not None:
+       user_password= user.password
+       print(check_password(password_request,user_password))
+       
+       
       
+       
+       
       
