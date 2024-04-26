@@ -8,6 +8,7 @@ load_dotenv()
 class TokenAdministration:
     
     # Función para generar un token de autenticación
+    @staticmethod
     def generate_token(user_id,rol):
         payload = {
             'user_id': user_id,
@@ -19,6 +20,7 @@ class TokenAdministration:
         print(token)
         return token
     
+    @staticmethod
     def verify_token(token):
         try:
             payload = jwt.decode(token, os.getenv("SECRET_KEY"), algorithms=['HS256'])
@@ -29,7 +31,7 @@ class TokenAdministration:
         except jwt.InvalidTokenError:
             print("Token inválido.")
             return None
-
-
-  
+        except Exception as e:
+            print("Error al decodificar el token:", e)
+        return None
   

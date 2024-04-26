@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
+from subscriptions.models import Subscription
 import re
 
 class User(models.Model):
@@ -14,6 +15,11 @@ class User(models.Model):
     rol = models.CharField(max_length=200, default="user")
     age = models.CharField(max_length=300)
     img = models.CharField(max_length=300)
+    ## relationship with foreign key to subscription
+    subscription = models.ForeignKey(Subscription,
+                                     on_delete=models.SET_NULL,
+                                     null=True,blank=True,
+                                     related_name="subscription")
     token = models.CharField(max_length=300,blank=True)
     
     

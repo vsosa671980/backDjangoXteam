@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 
+
 from security.validations import CreateUserFormValidation
-from .dao import CreateUSer,Login
+from .dao import CreateUSer,Login,listUsers
 import json
 
 # Create your views here.
@@ -25,12 +26,17 @@ def create(request):
                     email = data["email"]
                     password = data["password"]
                     phone = data["phone"]
-                    status = data["status"]
                     rol = data["rol"]
+                    status = data["status"]
                     img = data["img"]
                     age = data["age"]
+                    subscription_id = data["subscription_id"]
                     ## Create the user  
-                    CreateUSer(name, surname, email, password, phone,status,rol,img,age)
+                    CreateUSer(name, surname, email,
+                               password, phone,
+                               status,rol,
+                               img,age,
+                               subscription_id)
                     ## Send the response
                     response = {
                        "status": "success",
@@ -65,6 +71,28 @@ def login(request):
                 "message": str(e)
             })
 
+    else:
+        # Devolver error si la solicitud no es POST
+        return JsonResponse({
+            "status": "error",
+            "message": "Only POST requests are allowed."
+        })
+        
+def listUSers(request):
+    if request.method == 'GET':
+        try:
+            users = listUsers(request)
+             
+            return JsonResponse({
+                 "status": "success",
+                 "message": "users listed successfully",
+                 "users": users
+             })
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            })
     else:
         # Devolver error si la solicitud no es POST
         return JsonResponse({

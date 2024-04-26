@@ -1,4 +1,6 @@
+
 import bcrypt
+from django.core.paginator import Paginator
 
 def encrypt_password(password):
     try:
@@ -34,3 +36,15 @@ def check_password(request_password, user_password):
 def validate_password_length(password):
     if len(password) != 8:
         raise ValueError("La contraseña debe tener exactamente 8 caracteres.")
+    
+def Pagination_models(request,model,num_objects_per_page):
+    try:
+            list_object = model.objects.all()
+            paginator = Paginator(list_object, num_objects_per_page)  # 10 users per page
+            page_number = request.GET.get('page', 1)  # Get the page number from the GET request
+            page_obj = paginator.get_page(page_number)  # Obtain the list for this page
+            users_data = list(page_obj.object_list.values())
+            return users_data
+    except Exception as e:
+            raise Exception
+    
