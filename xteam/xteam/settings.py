@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     "users",
     "utils",
     "security",
-    "subscriptions"
+    "subscriptions",
+    'corsheaders',
+    "trainings"
  
    
 ]
@@ -58,6 +60,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "middlewares.middlewares.TokenMiddlewareVerification",
+    'corsheaders.middleware.CorsMiddleware'
     
 ]
 
@@ -142,3 +145,9 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # URL de tu aplicación React en desarrollo
+    "https://tu-aplicacion-react.com",  # URL de tu aplicación React en producción
+]
